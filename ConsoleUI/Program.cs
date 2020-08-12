@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ConsoleUI
 {
@@ -6,6 +7,7 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
+            public List<> MyProperty { get; set; }
             Console.WriteLine("Vaultproject");
         }
     }
