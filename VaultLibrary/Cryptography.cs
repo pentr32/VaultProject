@@ -73,5 +73,65 @@ namespace VaultLibrary
                 }
             }
         }
+
+        public string EncryptFileDES(string filePath, byte[] key, byte[] iv)
+        {
+            try
+            {
+                byte[] file = File.ReadAllBytes(filePath);
+                using (var AES = new AesCryptoServiceProvider())
+                {
+                    AES.IV = iv;
+                    AES.Key = key;
+                    AES.Mode = CipherMode.CBC;
+                    AES.Padding = PaddingMode.PKCS7;
+
+                    using (var memStream = new MemoryStream())
+                    {
+                        CryptoStream cryptoStream = new CryptoStream(memStream, AES.CreateEncryptor(), CryptoStreamMode.Write);
+
+                        cryptoStream.Write(file, 0, file.Length);
+                        cryptoStream.FlushFinalBlock();
+                        File.WriteAllBytes(filePath, memStream.ToArray());
+                    }
+                }
+
+                return "Filen er encrypteret!";
+            }
+            catch
+            {
+                return "Der sket en fejl!";
+            }
+        }
+
+        public string DecryptFileDES(string filePath, byte[] key, byte[] iv)
+        {
+            try
+            {
+                byte[] file = File.ReadAllBytes(filePath);
+                using (var AES = new AesCryptoServiceProvider())
+                {
+                    AES.IV = iv;
+                    AES.Key = key;
+                    AES.Mode = CipherMode.CBC;
+                    AES.Padding = PaddingMode.PKCS7;
+
+                    using (var memStream = new MemoryStream())
+                    {
+                        CryptoStream cryptoStream = new CryptoStream(memStream, AES.CreateDecryptor(), CryptoStreamMode.Write);
+
+                        cryptoStream.Write(file, 0, file.Length);
+                        cryptoStream.FlushFinalBlock();
+                        File.WriteAllBytes(filePath, memStream.ToArray());
+                    }
+                }
+
+                return "Filen er decrypteret!";
+            }
+            catch
+            {
+                return "Der sket en fejl!";
+            }
+        }
     }
 }
