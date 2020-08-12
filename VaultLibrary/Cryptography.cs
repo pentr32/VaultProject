@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using VaultLibrary.Model;
 
 namespace VaultLibrary
 {
     public class Cryptography
     {
-        public List<StoredUserPassword> AllStoredUserPasswords { get; set; }
+        //public List<StoredUserPassword> AllStoredUserPasswords { get; set; }
 
-        public Cryptography()
-        {
-            AllStoredUserPasswords = new List<StoredUserPassword>();
-        }
+        //public Cryptography()
+        //{
+        //    AllStoredUserPasswords = new List<StoredUserPassword>();
+        //}
 
         public byte[] GenerateRandomNumber(int length)
         {

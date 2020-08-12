@@ -7,7 +7,7 @@ namespace VaultLibrary.Model
     public class StoredUserPassword
     {
         public string Site { get; set; }
-        public string EncryptedPassword { get; set; }
+        public byte[] EncryptedPassword { get; set; }
         public byte[] IV { get; set; }
     }
 }
