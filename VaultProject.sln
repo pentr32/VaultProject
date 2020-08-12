@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{954A6D42-6B95-4420-973F-D4C14CA37239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VaultLibrary", "VaultLibrary\VaultLibrary.csproj", "{72EAA0B9-C8A4-4E25-8F5A-10A9662D82A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{954A6D42-6B95-4420-973F-D4C14CA37239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954A6D42-6B95-4420-973F-D4C14CA37239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954A6D42-6B95-4420-973F-D4C14CA37239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954A6D42-6B95-4420-973F-D4C14CA37239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72EAA0B9-C8A4-4E25-8F5A-10A9662D82A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72EAA0B9-C8A4-4E25-8F5A-10A9662D82A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72EAA0B9-C8A4-4E25-8F5A-10A9662D82A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72EAA0B9-C8A4-4E25-8F5A-10A9662D82A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F3DE929-4060-41D3-9AD4-47E076B2CFDC}
+	EndGlobalSection
+EndGlobal
