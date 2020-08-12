@@ -77,21 +77,21 @@ namespace VaultLibrary
             }
         }
 
-        public void EncryptFileDES(string filePath, byte[] key, byte[] iv)
+        public string EncryptFileDES(string filePath, byte[] key, byte[] iv)
         {
             try
             {
                 byte[] file = File.ReadAllBytes(filePath);
-                using (var DES = new DESCryptoServiceProvider())
+                using (var AES = new AesCryptoServiceProvider())
                 {
-                    DES.IV = iv;
-                    DES.Key = key;
-                    DES.Mode = CipherMode.CBC;
-                    DES.Padding = PaddingMode.PKCS7;
+                    AES.IV = iv;
+                    AES.Key = key;
+                    AES.Mode = CipherMode.CBC;
+                    AES.Padding = PaddingMode.PKCS7;
 
                     using (var memStream = new MemoryStream())
                     {
-                        CryptoStream cryptoStream = new CryptoStream(memStream, DES.CreateEncryptor(), CryptoStreamMode.Write);
+                        CryptoStream cryptoStream = new CryptoStream(memStream, AES.CreateEncryptor(), CryptoStreamMode.Write);
 
                         cryptoStream.Write(file, 0, file.Length);
                         cryptoStream.FlushFinalBlock();
@@ -99,18 +99,42 @@ namespace VaultLibrary
                     }
                 }
 
-                Console.WriteLine("Filen er encrypted!");
+                return "Filen er encrypteret!";
             }
-            catch (Exception e)
+            catch
             {
-                var error = e;
-                Console.WriteLine("Der sket en fejl!");
+                return "Der sket en fejl!";
             }
         }
 
-        public void DecryptFileDES(string filePath)
+        public string DecryptFileDES(string filePath, byte[] key, byte[] iv)
         {
+            try
+            {
+                byte[] file = File.ReadAllBytes(filePath);
+                using (var AES = new AesCryptoServiceProvider())
+                {
+                    AES.IV = iv;
+                    AES.Key = key;
+                    AES.Mode = CipherMode.CBC;
+                    AES.Padding = PaddingMode.PKCS7;
 
+                    using (var memStream = new MemoryStream())
+                    {
+                        CryptoStream cryptoStream = new CryptoStream(memStream, AES.CreateDecryptor(), CryptoStreamMode.Write);
+
+                        cryptoStream.Write(file, 0, file.Length);
+                        cryptoStream.FlushFinalBlock();
+                        File.WriteAllBytes(filePath, memStream.ToArray());
+                    }
+                }
+
+                return "Filen er decrypteret!";
+            }
+            catch
+            {
+                return "Der sket en fejl!";
+            }
         }
     }
 }
