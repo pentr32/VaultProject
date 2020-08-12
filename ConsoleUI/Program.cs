@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using VaultLibrary;
 
 namespace ConsoleUI
 {
@@ -7,8 +8,11 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            public List<> MyProperty { get; set; }
             Console.WriteLine("Vaultproject");
+            Cryptography crypt = new Cryptography();
+
+
+            //crypt.EncryptFileDES(@"C:\Users\robe1819\Desktop\Test.txt", key, iv);
         }
     }
 }
