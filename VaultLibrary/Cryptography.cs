@@ -74,7 +74,7 @@ namespace VaultLibrary
             }
         }
 
-        public string EncryptFileDES(string filePath, byte[] key, byte[] iv)
+        public string EncryptFileAES(string filePath, byte[] key, byte[] iv)
         {
             try
             {
@@ -100,11 +100,11 @@ namespace VaultLibrary
             }
             catch
             {
-                return "Der sket en fejl!";
+                return "Filen kunne ikke findes eller kunne ikke encrypteres!";
             }
         }
 
-        public string DecryptFileDES(string filePath, byte[] key, byte[] iv)
+        public string DecryptFileAES(string filePath, byte[] key, byte[] iv)
         {
             try
             {
@@ -128,9 +128,9 @@ namespace VaultLibrary
 
                 return "Filen er decrypteret!";
             }
-            catch
+            catch (Exception e)
             {
-                return "Der sket en fejl!";
+                return "Filen kunne ikke findes eller den er allerede decrypteret!";
             }
         }
     }
