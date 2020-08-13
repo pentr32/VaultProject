@@ -42,65 +42,53 @@ namespace ConsoleUI
                 switch (indtastedNr)
                 {
                     case 1:
+                        Console.Write("Indtast side:");
+                        string site = Console.ReadLine();
+                        Console.Write("Indtast brugernavn:");
+                        string username = Console.ReadLine();
+                        Console.Write("Indtast password:");
+                        string password = Console.ReadLine();
+                        byte[] encryptedPassword = GenerateNewUserPassword(ref newCrypto, keyPassword, 16, site, username, password);
+                        Console.WriteLine($"Dit krypterede password er: {Convert.ToBase64String(encryptedPassword)}");
+                        break;
 
-                        break;
                     case 2:
+                        foreach (StoredUserPassword userPassword in AllStoredUserPasswords)
+                        {
+                            string decryptedPassword = DecryptPasswordOfUser(ref newCrypto, keyPassword, userPassword.IV, userPassword.EncryptedPassword);
+                            Console.WriteLine($"URL: {userPassword.Site} | Username: {userPassword.Username} | Password: {decryptedPassword}");
+                            Console.WriteLine();
+                        }
                         break;
+
                     case 3:
                         Console.Clear();
-                        Console.WriteLine("Placer dit fil på DESKTOP og indtast filens navn nedunder");
+                        Console.WriteLine("Placer din fil på DESKTOP og indtast filens navn nedenunder");
                         Console.Write("Filens navn: ");
                         string filNavnENC = Console.ReadLine();
 
                         var encResult = EncryptFile(ref newCrypto, keyFile, 16, currentUserPath + @"\Desktop\" + filNavnENC);
                         Console.WriteLine(encResult);
                         break;
+
                     case 4:
                         Console.Clear();
-                        Console.WriteLine("Indtast den encrypteret filnavn nedunder");
+                        Console.WriteLine("Indtast den encrypteret filnavn nedenunder");
                         Console.Write("Filens navn: ");
                         string filNavnDEC = Console.ReadLine();
 
                         var decResult = DecryptFile(ref newCrypto, keyFile, currentUserPath + @"\Desktop\" + filNavnDEC);
                         Console.WriteLine(decResult);
                         break;
+
                     default:
-                        Console.WriteLine("Du indtasted forkert!");
+                        Console.WriteLine("Du indtastede forkert!");
                         break;
                 }
 
                 Console.ReadKey();
                 Console.Clear();
             }
-            Console.WriteLine("------------");
-            foreach (var item in AllStoredUserPasswords)
-            {
-                Console.WriteLine(DecryptPasswordOfUser(ref newCrypto, key, item.IV, item.EncryptedPassword));
-            }
-            var test = AllStoredUserPasswords;
-
-            var abe = EncryptFile(ref newCrypto, 32, 16, @"C:\Users\robe1819\Desktop\mercedes.jpeg");
-            Console.WriteLine(abe);
-
-            //var key = newCrypto.GenerateRandomNumber(32);
-            //var iv = newCrypto.GenerateRandomNumber(16);
-            //const string original = "This my secret message";
-
-            //var encrypted = newCrypto.EncryptPassword(Encoding.UTF8.GetBytes(original), key, iv);
-            //var decrypted = newCrypto.DecryptPassword(encrypted, key, iv);
-
-            //var decryptedMessage = Encoding.UTF8.GetString(decrypted);
-
-            //Console.WriteLine("AES Encryption Demonstration in .NET");
-            //Console.WriteLine("------------------------------------");
-            //Console.WriteLine();
-            //Console.WriteLine("Original Text = " + original);
-            //Console.WriteLine("Encrypted Text = " + Convert.ToBase64String(encrypted));
-            //Console.WriteLine("Decrypted Text = " + decryptedMessage);
-
-            //Console.ReadLine();
-
-
         }
 
         
@@ -128,7 +116,7 @@ namespace ConsoleUI
             var encrypted = newCrypto.EncryptPassword(Encoding.UTF8.GetBytes(password), key, ivRandom);
 
             AllStoredUserPasswords.Add(
-                new StoredUserPassword { Site = site, IV = ivRandom, EncryptedPassword = encrypted }
+                new StoredUserPassword { Site = site, IV = ivRandom, EncryptedPassword = encrypted, Username = username }
             );
             
             return encrypted;
