@@ -1,6 +1,7 @@
 ﻿using ConsoleUI.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -15,6 +16,7 @@ namespace ConsoleUI
         public static MasterPassword MasterPassword { get; set; }
         public static List<StoredUserPassword> AllStoredUserPasswords { get; set; }                     // Liste med alle encrypted password med deres IV og WebSide. 
         public static List<StoredEncryptedFile> AllStoredEncryptedFiles { get; set; }                   // Liste med alle FilePaths og deres IV.
+        public static StoredDocumentAndSignature DocumentAndSignature { get; set; }
 
         static void Main(string[] args)
         {
@@ -23,7 +25,8 @@ namespace ConsoleUI
             MasterPassword = new MasterPassword();
             AllStoredUserPasswords = new List<StoredUserPassword>();                                    
             AllStoredEncryptedFiles = new List<StoredEncryptedFile>();                                  
-            Cryptography newCrypto = new Cryptography();                                                
+            Cryptography newCrypto = new Cryptography();
+            DigitalSignature newDigSig = new DigitalSignature();
 
             var keyPassword = newCrypto.GenerateRandomNumber(32);                                       // Generer et ny key med random numbers til passwords. 
             var keyFile = newCrypto.GenerateRandomNumber(32);                                           // Generer et ny key med random numbers til filer.
@@ -46,9 +49,9 @@ namespace ConsoleUI
             {
                 Console.Clear();
                 Console.WriteLine("Vaultproject\n\n");
-                Console.WriteLine("====================================");
-                Console.WriteLine("| 1 - Create new ecrypted password | \n| 2 - Show all my passwords        | \n| 3 - Encrypt a file               | \n| 4 - Decrypt file                 |", Color.GreenYellow);
-                Console.WriteLine("====================================");
+                Console.WriteLine(" =======================================");
+                Console.WriteLine(" | 1 - Create new ecrypted password    | \n | 2 - Show all my passwords           | \n | 3 - Encrypt a file                  | \n | 4 - Decrypt file                    | \n | 5 - Hash document and sign the data | \n | 6 - Verify signature                |");
+                Console.WriteLine(" =======================================");
 
                 Console.Write("\n Indtast: ");
 
@@ -76,7 +79,6 @@ namespace ConsoleUI
                         break;
 
                     case 3:
-                        Console.Clear();
                         Console.WriteLine("Placer din fil på DESKTOP og indtast filens navn nedenunder");
                         Console.Write("Filens navn: ");
                         string filNavnENC = Console.ReadLine();
@@ -86,13 +88,26 @@ namespace ConsoleUI
                         break;
 
                     case 4:
-                        Console.Clear();
                         Console.WriteLine("Indtast den encrypteret filnavn nedenunder");
                         Console.Write("Filens navn: ");
                         string filNavnDEC = Console.ReadLine();
 
                         var decResult = DecryptFile(ref newCrypto, keyFile, currentUserPath + @"\Desktop\" + filNavnDEC);
                         Console.WriteLine(decResult);
+                        break;
+
+                    case 5:
+                        Console.WriteLine("Indtast din document nedunder");
+                        Console.Write("Document: ");
+                        string document = Console.ReadLine();
+
+                        var docResult = HashDocumentAndSignData(ref newDigSig, document);
+                        Console.WriteLine(docResult);
+                        break;
+
+                    case 6:
+                        var verifiedResult = VerifySignature(ref newDigSig);
+                        Console.WriteLine(verifiedResult);
                         break;
 
                     default:
@@ -170,6 +185,30 @@ namespace ConsoleUI
         public static string DecryptPasswordOfUser(ref Cryptography newCrypto, byte[] key, byte[] iv, byte[] password)
         {
             return Encoding.UTF8.GetString(newCrypto.DecryptPassword(password,key,iv));
+        }
+
+        public static string HashDocumentAndSignData(ref DigitalSignature newDigSig, string document)
+        {
+            byte[] hashedDocument = newDigSig.HashDocument(Encoding.UTF8.GetBytes(document));
+
+            newDigSig.AssignNewKey();
+            var signature = newDigSig.SignData(hashedDocument);
+            DocumentAndSignature = new StoredDocumentAndSignature { Document = document, HashedDocument = hashedDocument, Signature = signature };
+
+            return "Document er hashed og signed";
+        }
+
+        public static string VerifySignature(ref DigitalSignature newDigSig)
+        {
+            var verified = newDigSig.VerifySignature(DocumentAndSignature.HashedDocument, DocumentAndSignature.Signature);
+                
+            Console.WriteLine(" Document text = " + DocumentAndSignature.Document);
+            Console.WriteLine("\n Digital signature = " + Convert.ToBase64String(DocumentAndSignature.Signature));
+            Console.WriteLine("\n\n");
+
+            return verified
+                ? "The digital signature is verified and it does match!"
+                : "The digital signature does NOT match!";
         }
         #endregion PasswordManage
     }
