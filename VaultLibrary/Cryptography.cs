@@ -8,13 +8,6 @@ namespace VaultLibrary
 {
     public class Cryptography
     {
-        //public List<StoredUserPassword> AllStoredUserPasswords { get; set; }
-
-        //public Cryptography()
-        //{
-        //    AllStoredUserPasswords = new List<StoredUserPassword>();
-        //}
-
         public byte[] GenerateRandomNumber(int length)
         {
             using (var randomNumberGenerator = new RNGCryptoServiceProvider())
