@@ -8,12 +8,40 @@ namespace VaultLibrary
 {
     public class Cryptography
     {
-        //public List<StoredUserPassword> AllStoredUserPasswords { get; set; }
-
-        //public Cryptography()
+        #region HashingWithSalt - Master Password
+        //public byte[] GenerateSalt()
         //{
-        //    AllStoredUserPasswords = new List<StoredUserPassword>();
+        //    const int saltLength = 32;
+
+        //    using (var randomNumberGenerator = new RNGCryptoServiceProvider())
+        //    {
+        //        var randomNumber = new byte[saltLength];
+        //        randomNumberGenerator.GetBytes(randomNumber);
+
+        //        return randomNumber;
+        //    }
         //}
+
+        private byte[] Combine(byte[] first, byte[] second)
+        {
+            var ret = new byte[first.Length + second.Length];
+
+            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
+            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
+
+            return ret;
+        }
+
+        public byte[] HashPasswordWithSalt(byte[] toBeHashed, byte[] salt)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                return sha256.ComputeHash(Combine(toBeHashed, salt));
+            }
+        }
+        #endregion HashingWithSalt
+
+
 
         public byte[] GenerateRandomNumber(int length)
         {

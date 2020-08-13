@@ -12,6 +12,7 @@ namespace ConsoleUI
 {
     class Program
     {
+        public static MasterPassword MasterPassword { get; set; }
         public static List<StoredUserPassword> AllStoredUserPasswords { get; set; }                     // Liste med alle encrypted password med deres IV og WebSide. 
         public static List<StoredEncryptedFile> AllStoredEncryptedFiles { get; set; }                   // Liste med alle FilePaths og deres IV.
 
@@ -19,6 +20,7 @@ namespace ConsoleUI
         {
 
             #region Config
+            MasterPassword = new MasterPassword();
             AllStoredUserPasswords = new List<StoredUserPassword>();                                    
             AllStoredEncryptedFiles = new List<StoredEncryptedFile>();                                  
             Cryptography newCrypto = new Cryptography();                                                
@@ -29,8 +31,20 @@ namespace ConsoleUI
             string currentUserPath = System.Environment.GetEnvironmentVariable("USERPROFILE");
             #endregion Config
 
+
+            GenerateMasterPassword(ref newCrypto);
+
+            string insertedMasterPasswordConsole;
+            do
+            {
+                Console.Write("Insert master password:");
+                insertedMasterPasswordConsole = Console.ReadLine();
+
+            } while (CheckIfMasterPasswordMatch(ref newCrypto, insertedMasterPasswordConsole) == false);
+
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("Vaultproject\n\n");
                 Console.WriteLine("====================================");
                 Console.WriteLine("| 1 - Create new ecrypted password | \n| 2 - Show all my passwords        | \n| 3 - Encrypt a file               | \n| 4 - Decrypt file                 |", Color.GreenYellow);
@@ -89,6 +103,7 @@ namespace ConsoleUI
                 Console.ReadKey();
                 Console.Clear();
             }
+
         }
 
         
@@ -110,6 +125,37 @@ namespace ConsoleUI
             return result;
         }
 
+        #region MasterPassword
+        public static void GenerateMasterPassword(ref Cryptography newCrypto)
+        {
+            Console.WriteLine("Opret master password");
+            string masterPasswordPlain = Console.ReadLine();
+
+            MasterPassword.GeneratedSalt = newCrypto.GenerateRandomNumber(32); // Used to generate salt. Salt lenght 32
+
+            Console.WriteLine("Salt = " + Convert.ToBase64String(MasterPassword.GeneratedSalt));
+
+
+            MasterPassword.HashedSaltPassword = newCrypto.HashPasswordWithSalt(Encoding.UTF8.GetBytes(masterPasswordPlain), MasterPassword.GeneratedSalt);
+
+            Console.WriteLine("Hashed Password = " + Convert.ToBase64String(MasterPassword.HashedSaltPassword));
+        }
+
+        public static bool CheckIfMasterPasswordMatch(ref Cryptography newCrypto, string plainPasswordInserted)
+        {
+            var insertedPasswordHashedSalt = newCrypto.HashPasswordWithSalt( Encoding.UTF8.GetBytes(plainPasswordInserted), MasterPassword.GeneratedSalt);
+            if (Convert.ToBase64String(MasterPassword.HashedSaltPassword) == Convert.ToBase64String(insertedPasswordHashedSalt))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion MasterPassword
+
+        #region PasswordManage
         public static byte[] GenerateNewUserPassword(ref Cryptography newCrypto, byte[] key, int iv, string site, string username, string password)
         {
             var ivRandom = newCrypto.GenerateRandomNumber(iv);
@@ -125,5 +171,6 @@ namespace ConsoleUI
         {
             return Encoding.UTF8.GetString(newCrypto.DecryptPassword(password,key,iv));
         }
+        #endregion PasswordManage
     }
 }
