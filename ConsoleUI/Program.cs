@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using VaultLibrary;
 using VaultLibrary.Model;
@@ -29,10 +30,15 @@ namespace ConsoleUI
                 byte[] encrypted = GenerateNewUserPassword(ref newCrypto, key, 16, "www.google.dk", "hej", Console.ReadLine());
                 Console.WriteLine(Convert.ToBase64String(encrypted));
             }
+            Console.WriteLine("------------");
+            foreach (var item in AllStoredUserPasswords)
+            {
+                Console.WriteLine(DecryptPasswordOfUser(ref newCrypto, key, item.IV, item.EncryptedPassword));
+            }
             var test = AllStoredUserPasswords;
 
-            var abe = EncryptFile(ref newCrypto, 32, 16, @"C:\Users\robe1819\Desktop\mercedes.jpeg");
-            Console.WriteLine(abe);
+            //var abe = EncryptFile(ref newCrypto, 32, 16, @"C:\Users\robe1819\Desktop\mercedes.jpeg");
+            //Console.WriteLine(abe);
 
             //var key = newCrypto.GenerateRandomNumber(32);
             //var iv = newCrypto.GenerateRandomNumber(16);
@@ -73,6 +79,10 @@ namespace ConsoleUI
             );
             
             return encrypted;
+        }
+        public static string DecryptPasswordOfUser(ref Cryptography newCrypto, byte[] key, byte[] iv, byte[] password)
+        {
+            return Encoding.UTF8.GetString(newCrypto.DecryptPassword(password,key,iv));
         }
     }
 }
